@@ -1,11 +1,15 @@
 <script>
-    export let setInputImage;
+    import {inputImage, inputImageFile} from './stores';
+
     let files;
     let image;
     function onFileUpload(e) {
         if(files && files[0]) {
             let reader = new FileReader();
-            reader.onload = (ev) => setInputImage(ev.target.result, files[0]);
+            reader.onload = (ev) => {
+                inputImage.set(ev.target.result);
+                inputImageFile.set(files[0]);
+            }
             reader.readAsDataURL(files[0]);
         }
     }
