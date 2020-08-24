@@ -2,23 +2,34 @@
 	import FileUpload from './FileUpload.svelte';
 	import Embedding from './Embedding.svelte';
 	import ImageView from './ImageView.svelte';
+	export let name;
+	let inputFile;
 	let inputImage;
 	let outputImage;
+	let loading = false;
 
-	function setInputImage(img) { inputImage = img; sendInputImageToServer(); }
+	function setInputImage(img, iFile) { 
+		inputImage = img;
+		inputFile = iFile;
+		sendInputImageToServer(); 
+	}
+
 	async function sendInputImageToServer() {
+		loading = true;
+		const data = new FormData();
+		data.append('file', inputFile)
 		const content = {
 			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({hello: 'world'})
+			body: data
 		};
-		const url = 'http://localhost:5000/hello_post';
+		const url = '/upload';
+		outputImage = await fetch(url, content);
 		const response = await fetch(url, content);
-		const json = await response.json();
-		console.log({json});
+
+		// display blob image https://stackoverflow.com/a/43871843/3125070
+		const urlCreator = window.URL || window.webkitURL;
+		outputImage = urlCreator.createObjectURL(await response.blob());
+		loading = false;
 	}
 </script>
 
@@ -27,7 +38,7 @@
 	<div class="ml">
 		<ImageView title="Input" image={inputImage} />
 		<Embedding />
-		<ImageView title="Output" image={inputImage} />
+		<ImageView title="Output" image={outputImage} loading={loading} />
 	</div>
 </div>
 

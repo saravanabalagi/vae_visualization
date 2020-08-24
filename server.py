@@ -22,20 +22,11 @@ def serve_numpy_image(numpy_arr):
 @app.route('/upload', methods=['POST'])
 def receive_image():
    data = request.files['file']
-   return jsonify({"status":"ok"})
+   img_input = np.array(Image.open(data))
 
-
-@app.route('/hello_post', methods=['POST'])
-def hello_post():
-   data = request.json
-   return jsonify({'status': data['hello']})
-
-
-@app.route('/get_image')
-def serve_image():
-   img = np.random.rand(100, 100)
-   img = img_as_ubyte(img)
-   return serve_numpy_image(img)
+   img_output = np.random.rand(100, 100)
+   img_output = img_as_ubyte(img_output)
+   return  serve_numpy_image(img_output)
 
 
 @app.route("/")

@@ -5,7 +5,7 @@
     function onFileUpload(e) {
         if(files && files[0]) {
             let reader = new FileReader();
-            reader.onload = (ev) => setInputImage(ev.target.result);
+            reader.onload = (ev) => setInputImage(ev.target.result, files[0]);
             reader.readAsDataURL(files[0]);
         }
     }
