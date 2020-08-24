@@ -39,9 +39,9 @@
     {:then response}
         {#each embedding as number, i}
             <div>
-                <span>{number}</span>
-                <input type=range min={-1} max={1} step={0.1} bind:value={values[i]} on:change={setModEmbedding} />
-                <span class="numDisplay">{values[i]}</span>
+                <span class="numDisplay left">{number.toFixed(2)}</span>
+                <input type=range min={-1} max={1} step={0.01} bind:value={values[i]} on:change={setModEmbedding} />
+                <span class="numDisplay right">{values[i].toFixed(2)}</span>
             </div>
         {/each}
     {:catch error}
@@ -57,4 +57,6 @@
         display: inline-block;
         width: 50px;
     }
+    .numDisplay.left { text-align: right; }
+    .numDisplay.right { text-align: left; }
 </style>
