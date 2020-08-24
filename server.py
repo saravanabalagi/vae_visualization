@@ -19,14 +19,21 @@ def serve_numpy_image(numpy_arr):
    return send_file(img_io, mimetype='image/PNG')
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload_image', methods=['POST'])
 def receive_image():
-   data = request.files['file']
-   img_input = np.array(Image.open(data))
+   # data = request.files['image']
+   # img_input = np.array(Image.open(data))
+   # return jsonify({ 'embedding': img_input.shape })
+   return jsonify({ 'embedding': np.random.rand(10).tolist() })
 
+
+@app.route('/upload_embedding', methods=['POST'])
+def receive_embedding():
+   embedding = request.json['embedding']
+   # do stuff with embedding to get image
    img_output = np.random.rand(100, 100)
    img_output = img_as_ubyte(img_output)
-   return  serve_numpy_image(img_output)
+   return serve_numpy_image(img_output)
 
 
 @app.route("/")
