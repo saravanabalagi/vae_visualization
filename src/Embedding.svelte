@@ -7,7 +7,7 @@
     
     let embedding = [];
     let values = [];
-    let promise = getEmbedding(inputImageFile);
+    $:promise = getEmbedding(inputImageFile);
 
     async function getEmbedding(inputImageFile) {
         const url = '/upload_image';
