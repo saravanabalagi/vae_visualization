@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import io
 
-app = Flask(__name__, static_url_path='', static_folder='public')
+app = Flask(__name__, static_url_path='', static_folder='../public')
 
 
 def serve_numpy_image(numpy_arr):
