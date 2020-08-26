@@ -5,6 +5,10 @@
     let embedding = [];
     let values = [];
 
+    // values are modified as slider moves
+    // use on change to avoid multiple requests
+    // $:{ modEmbedding.set(values); }
+
     $:promise = getEmbedding($inputImageFile);
     async function getEmbedding(inputImageFile) {
         const url = '/upload_image';
@@ -20,6 +24,7 @@
         if(response.ok) {
             embedding = responseJson.embedding || [];
             values = Array.from(embedding);
+            modEmbedding.set(values);
             return responseJson;
         }
         else throw new Error(responseJson);

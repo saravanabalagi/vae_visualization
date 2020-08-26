@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
-export const inputImageFile = writable(0);
-export const inputImage = writable(0);
-export const embedding = writable(0);
-export const modEmbedding = writable(0);
-export const outputImage = writable(0);
+export const inputImageFile = writable();
+export const inputImage = writable();
+export const embedding = writable([]);
+export const modEmbedding = writable([]);
+export const outputImage = writable();
