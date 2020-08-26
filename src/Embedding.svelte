@@ -1,14 +1,11 @@
 <script>
     import { modEmbedding } from "./stores";
-	let inputImageFile;
-
-	import {inputImage as inputImageStore, inputImageFile as inputImageFileStore} from './stores';
-    const unsubscribeInputImageFile =  inputImageFileStore.subscribe(val => inputImageFile = val);
+	import {inputImageFile} from './stores';
     
     let embedding = [];
     let values = [];
-    $:promise = getEmbedding(inputImageFile);
 
+    $:promise = getEmbedding($inputImageFile);
     async function getEmbedding(inputImageFile) {
         const url = '/upload_image';
         const data = new FormData();
@@ -19,10 +16,12 @@
         };
         let response = await fetch(url, content);
         let responseJson = await response.json();
-        embedding = responseJson.embedding || [];
-        values = Array.from(embedding);
 
-        if(response.ok) return responseJson;
+        if(response.ok) {
+            embedding = responseJson.embedding || [];
+            values = Array.from(embedding);
+            return responseJson;
+        }
         else throw new Error(responseJson);
     }
 

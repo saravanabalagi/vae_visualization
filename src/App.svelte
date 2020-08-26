@@ -3,17 +3,14 @@
 	import Embedding from './Embedding.svelte';
 	import OutputImageView from './OutputImageView.svelte';
 	import InputImageView from './InputImageView.svelte';
-	
-	let inputImageFile;
-	import {inputImageFile as inputImageFileStore} from './stores';
-	const unsubscribeInputImageFile =  inputImageFileStore.subscribe(val => inputImageFile = val);
+	import {inputImageFile} from './stores';
 </script>
 
 <div class="app">
 	<FileUpload />
 	<div class="ml">
 		<InputImageView />	
-		{#if inputImageFile}
+		{#if $inputImageFile}
 			<Embedding />
 			<OutputImageView />
 		{/if}
