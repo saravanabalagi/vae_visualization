@@ -30,6 +30,10 @@
         modEmbedding.set(values);
     }
 
+    function resetEmbeddingAt(i) {
+        values[i] = embedding[i];
+    }
+
 </script>
 
 <div class="embeddingView">
@@ -39,7 +43,7 @@
     {:then response}
         {#each embedding as number, i}
             <div>
-                <span class="numDisplay left">{number.toFixed(2)}</span>
+                <span class="numDisplay left" on:click={() => resetEmbeddingAt(i)}>{number.toFixed(2)}</span>
                 <input type=range min={-1} max={1} step={0.01} bind:value={values[i]} on:change={setModEmbedding} />
                 <span class="numDisplay right">{values[i].toFixed(2)}</span>
             </div>
