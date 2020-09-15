@@ -27,11 +27,16 @@
 
 <div>
     <h2>Output</h2>
-    {#await promise}
-        Loading...
-    {:then response}
+    <div>
+        {#await promise}
+            Loading...
+        {:then response}
+            Loaded!
+        {/await}
+    </div>
+    <div>
         {#if $outputImage}
             <ImageView image={$outputImage} />
         {/if}
-    {/await}
+    </div>
 </div>
