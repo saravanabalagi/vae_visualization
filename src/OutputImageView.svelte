@@ -4,7 +4,7 @@
 
     $:promise = getOutputImage($modEmbedding);
     async function getOutputImage(modEmbedding) {
-        const url = '/upload_embedding';
+        const url = '/decoded_img';
 		const content = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

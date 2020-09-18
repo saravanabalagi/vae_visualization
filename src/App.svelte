@@ -1,16 +1,16 @@
 <script>
-	import FileUpload from './FileUpload.svelte';
 	import Embedding from './Embedding.svelte';
 	import OutputImageView from './OutputImageView.svelte';
 	import InputImageView from './InputImageView.svelte';
-	import {inputImageFile} from './stores';
+	import ImageGrid from './ImageGrid.svelte';
+	import {inputImageFile, selectedServerImgIndex} from './stores';
 </script>
 
 <div class="app">
-	<FileUpload />
+	<ImageGrid />
 	<div class="ml">
 		<InputImageView />	
-		{#if $inputImageFile}
+		{#if $inputImageFile != null || $selectedServerImgIndex != null}
 			<Embedding />
 			<OutputImageView />
 		{/if}

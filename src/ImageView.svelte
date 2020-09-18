@@ -4,14 +4,15 @@
 
 <div class="imageView">
     {#if image}
-        <img src={image} />
+        <img src={image} alt="ImageView" />
     {:else}
         <span>No image loaded</span>
     {/if}
 </div>
 
 <style>
-    .imageView {
-        padding: 10px;
+    .imageView img {
+        width: 100%;
+        display: block;
     }
 </style>

@@ -1,5 +1,5 @@
 <script>
-    import {inputImage, inputImageFile} from './stores';
+    import {inputImage, inputImageFile, selectedServerImgIndex} from './stores';
 
     let files;
     let image;
@@ -9,6 +9,7 @@
             reader.onload = (ev) => {
                 inputImage.set(ev.target.result);
                 inputImageFile.set(files[0]);
+                selectedServerImgIndex.set(null);
             }
             reader.readAsDataURL(files[0]);
         }
