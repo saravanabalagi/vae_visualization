@@ -4,12 +4,15 @@
 	import InputImageView from './InputImageView.svelte';
 	import ImageGrid from './ImageGrid.svelte';
 	import {inputImageFile, selectedServerImgIndex} from './stores';
+
+	import 'bulma/css/bulma.css';
+	import '@fortawesome/fontawesome-free/css/all.css';
 </script>
 
 <div class="app">
 	<ImageGrid />
 	<div class="ml">
-		<InputImageView />	
+		<InputImageView />
 		{#if $inputImageFile != null || $selectedServerImgIndex != null}
 			<Embedding />
 			<OutputImageView />
