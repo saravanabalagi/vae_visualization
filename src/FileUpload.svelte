@@ -1,8 +1,9 @@
 <script>
     import {inputImage, inputImageFile, selectedServerImgIndex} from './stores';
+    import { Button } from 'svelma';
 
+    let fileUploadElement;
     let files;
-    let image;
     function onFileUpload(e) {
         if(files && files[0]) {
             let reader = new FileReader();
@@ -14,15 +15,15 @@
             reader.readAsDataURL(files[0]);
         }
     }
-
 </script>
 
-<input type="file" bind:files accept="image/*" on:change={onFileUpload}>
+<Button type="is-info" on:click={() => fileUploadElement.click()}>
+    Upload Image
+    <input bind:this={fileUploadElement} type="file" bind:files accept="image/*" on:change={onFileUpload}>
+</Button>
 
-<div>
-    {#if files && files[0]}
-        <p>
-            {files[0].name}
-        </p>
-    {/if}
-</div>
+<style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
