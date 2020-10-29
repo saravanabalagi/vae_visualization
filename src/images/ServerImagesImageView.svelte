@@ -1,5 +1,5 @@
 <script>
-    import {selectedServerImgIndex, inputImage} from './stores';
+    import {selectedServerImgIndex, inputImage} from 'stores';
     import ImageView from "./ImageView.svelte";
     export let idx;
     export let setLoading;
@@ -27,3 +27,10 @@
         <ImageView image={imagePath} />
     {/if}
 </div>
+
+<style>
+.serverImage {
+    cursor: pointer;
+}
+
+</style>

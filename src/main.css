@@ -1,0 +1,10 @@
+html {
+	overflow-x: auto;
+	overflow-y: auto;
+}
+
+.header-space-between {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}

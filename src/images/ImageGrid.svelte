@@ -1,5 +1,5 @@
 <script>
-    import FileUpload from "./FileUpload.svelte";
+    import FileUpload from "../files/FileUpload.svelte";
     import ServerImagesImageView from "./ServerImagesImageView.svelte";
     import { Button } from 'svelma';
 

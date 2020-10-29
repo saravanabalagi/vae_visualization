@@ -1,5 +1,5 @@
 <script>
-    import {inputImage, inputImageFile, selectedServerImgIndex} from './stores';
+    import {inputImage, inputImageFile, selectedServerImgIndex} from 'stores';
     import { Button } from 'svelma';
 
     let fileUploadElement;

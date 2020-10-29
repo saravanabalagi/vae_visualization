@@ -1,12 +1,18 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
+import globals from "rollup-plugin-node-globals";
+import builtins from "rollup-plugin-node-builtins";
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import preprocess from 'svelte-preprocess';
-import postcss from 'rollup-plugin-postcss'
+import postcss from 'rollup-plugin-postcss';
+import alias from '@rollup/plugin-alias';
+import path from 'path';
 
 const production = !process.env.ROLLUP_WATCH;
+const projectRootDir = path.resolve(__dirname);
+
 
 function serve() {
 	let server;
@@ -49,9 +55,17 @@ export default {
 			}
 		}),
 
+		alias({
+			entries: [
+			  { find: 'stores', replacement: path.resolve(projectRootDir, 'src', 'stores') }
+			]
+		}),
+
 		// user defined
 		postcss(),
 		commonjs(),
+		globals(),
+		builtins(),
 		
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In

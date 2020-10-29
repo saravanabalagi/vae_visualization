@@ -1,6 +1,7 @@
 <script>
-    import { modEmbedding, outputImage } from './stores';
-	import ImageView from './ImageView.svelte';
+    import { modEmbedding, outputImage } from 'stores';
+    import ImageView from './ImageView.svelte';
+    import { Tooltip } from 'svelma'; 
 
     $:promise = getOutputImage($modEmbedding);
     async function getOutputImage(modEmbedding) {
@@ -25,14 +26,20 @@
     }
 </script>
 
-<div>
-    <h2>Output</h2>
-    <div>
-        {#await promise}
-            Loading...
-        {:then response}
-            Loaded!
-        {/await}
+<div class="p-3">
+    <div class="header-space-between mb-3">
+        <div class="is-size-5">Reconstruction</div>
+        <div>
+            {#await promise}
+                <i class="fas fa-circle-notch fa-spin has-text-info"></i>
+            {:then response}
+                <i class="fas fa-check-circle has-text-success"></i>
+            {:catch error}
+                <Tooltip label={error}>
+                    <i class="fas fa-times-circle has-text-danger"></i>
+                </Tooltip>
+            {/await}
+        </div>
     </div>
     <div>
         {#if $outputImage}
