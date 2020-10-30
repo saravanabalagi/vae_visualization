@@ -1,24 +1,27 @@
 <script>
     // export let embeddingsOrig;
-    import nj from 'numjs';
+    import nj, { max } from 'numjs';
     import heatmap from 'simpleheat';
     import { onMount } from 'svelte';
-    import {data as datac} from './data';
-
-    let ch=1205, cw=15;
-    let canvas, d, hm, edh=1205, edw=15, hmMax=10, hmRad=1, hmBlur=1;
+    let ch=400, cw=400;
+    let canvas, d, hm, edh=100, edw=50, hmMax=100, hmRad=1, hmBlur=1;
+    let canvas2;
     $: {
         d = nj.zeros([3, edh, edw]);
-        for(let i=0; i<edw; i++) {
-            for(let j=0; j<edh; j++) {
-                d.set(0,j,i,i);
-                d.set(1,j,i,j);
-                d.set(2,j,i,Math.random()*10);
+        for(let i=0; i<edh; i++) {
+            for(let j=0; j<edw; j++) {
+                d.set(0,i,j,j);
+                d.set(1,i,j,i);
+                d.set(2,i,j,getRand(i,j));
             }
         }
         d = d.transpose(1,2,0);
         d = d.reshape(edh*edw, 3);
         console.log(d.shape, d.slice([0,3]).tolist(), d);
+    }
+
+    function getRand(i,j) {
+        return i;
     }
 
     function handleHeatmapChange() {
@@ -39,10 +42,30 @@
         canvas.width = cw;
         // console.log('component loaded', canvas, d);
         hm = heatmap(canvas).data(d.tolist())
-        hm.radius(1,1);
-        hm.max(hmMax);
-        hm.draw();
+        handleHeatmapChange();
+
+        canvas2.height = ch;
+        canvas2.width = cw;
+        paintInCanvas(canvas2, d);
     })
+
+    function paintInCanvas(c, numjsArray) {
+        let ctx = c.getContext('2d');
+        let imgData = ctx.getImageData(0, 0, cw, ch);
+        let [nh, nw] = numjsArray.shape;
+        for(let i=0; i<imgData.data.length; i+=4) {
+            let h = parseInt(i/(4*cw));
+            let w = (i/4) % ch;
+            let r = 0, g = 0, b = 0;
+            if(h<nh && w<nw) 
+                r = Math.min((numjsArray.get(h,w) / hmMax)*255, 255);
+            imgData.data[i + 0] = r;
+            imgData.data[i + 1] = g;
+            imgData.data[i + 2] = b;
+            imgData.data[i + 3] = 255;
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
 
 </script>
 
@@ -55,4 +78,5 @@
         <input type="number" bind:value={cw} min=1 max=1500 step=1 on:change={handleCanvasChange} />
     </div>
     <canvas bind:this={canvas} />
+    <canvas bind:this={canvas2} />
 </div>

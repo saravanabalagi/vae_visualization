@@ -5,4 +5,3 @@ export const inputImage = writable();
 export const embedding = writable([]);
 export const modEmbedding = writable([]);
 export const outputImage = writable();
-export const selectedServerImgIndex = writable();

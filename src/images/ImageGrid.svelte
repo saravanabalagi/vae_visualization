@@ -1,6 +1,6 @@
 <script>
     import FileUpload from "../files/FileUpload.svelte";
-    import ServerImagesImageView from "./ServerImagesImageView.svelte";
+    import ServerImage from "./ServerImage.svelte";
     import { Button } from 'svelma';
 
     let min = 0, max;
@@ -37,7 +37,7 @@
             {#each Array.from(Array(numColumns).keys()) as c, i}
                 <div class="custom-grid-column" idx={c} style="--maxWidth:{100/numColumns + '%'}">
                     {#each randomIndices.slice(c*numRows, c*numRows+numRows) as idx, j}
-                        <ServerImagesImageView {idx} {setLoading} />
+                        <ServerImage {idx} {setLoading} />
                     {/each}
                 </div>
             {/each}

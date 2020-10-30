@@ -1,6 +1,6 @@
 <script>
     import ImageView from './ImageView.svelte';
-    import { inputImage, selectedServerImgIndex } from 'stores';
+    import { inputImage } from 'stores';
     import { Tooltip } from 'svelma';
 
     let imgsDir, promise, imgIdx;
@@ -46,7 +46,6 @@
 
         if(response.ok) {
             let idx = responseJson.idx;
-            selectedServerImgIndex.set(idx);
             inputImage.set(imgPath);
             return responseJson;
         }

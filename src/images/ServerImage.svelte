@@ -1,5 +1,5 @@
 <script>
-    import {selectedServerImgIndex, inputImage} from 'stores';
+    import {inputImage} from 'stores';
     import ImageView from "./ImageView.svelte";
     export let idx;
     export let setLoading;
@@ -16,13 +16,12 @@
         return resJson.path;
     }
 
-    function saveIndexToStores() { 
-        selectedServerImgIndex.set(idx);
+    function saveImgPathToStore() {
         inputImage.set(imagePath);
     }
 </script>
 
-<div class="serverImage" on:click={saveIndexToStores}>
+<div class="serverImage" on:click={saveImgPathToStore}>
     {#if imagePath != null}
         <ImageView image={imagePath} />
     {/if}

@@ -1,5 +1,5 @@
 <script>
-    import {inputImage, inputImageFile, selectedServerImgIndex} from 'stores';
+    import { inputImage, inputImageFile } from 'stores';
     import { Button } from 'svelma';
 
     let fileUploadElement;
@@ -10,7 +10,6 @@
             reader.onload = (ev) => {
                 inputImage.set(ev.target.result);
                 inputImageFile.set(files[0]);
-                selectedServerImgIndex.set(null);
             }
             reader.readAsDataURL(files[0]);
         }

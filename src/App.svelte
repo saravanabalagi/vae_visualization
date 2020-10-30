@@ -4,7 +4,7 @@
 	import InputImageView from './images/InputImageView.svelte';
 	import ImageGrid from './images/ImageGrid.svelte';
 	import VideoView from './videos/VideoView.svelte';
-	import {inputImageFile, selectedServerImgIndex} from 'stores';
+	import {inputImageFile, inputImage} from 'stores';
 	import {Tabs, Tab} from 'svelma';
 
 	import 'bulma/css/bulma.css';
@@ -19,7 +19,7 @@
 			<Tab label="Image">
 				<div class="ml">
 					<InputImageView />
-					{#if $inputImageFile != null || $selectedServerImgIndex != null}
+					{#if $inputImageFile != null || $inputImage != null}
 						<Embedding />
 						<OutputImageView />
 					{/if}
@@ -28,7 +28,7 @@
 			<Tab label="Video">
 				<div class="video">
 					<InputImageView />
-					{#if $inputImageFile != null || $selectedServerImgIndex != null}
+					{#if $inputImageFile != null || $inputImage != null}
 						<VideoView />
 					{/if}
 				</div>
