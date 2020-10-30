@@ -6,41 +6,50 @@
     import { Button, Switch } from 'svelma';
 
     let embeddings, embeddingsDiff;
-    let canvas, d, hm, edh, edw;
+    let canvas, d, hm, ch, cw, enableDiff=true;
     let hmMax=10, hmRad=1, hmBlur=1;
-    let diffFromFirst = false;
+    let enableDiffFromFirst = false;
     $: {
         embeddings = nj.array(embeddingsOrig);
-        let view1;
-        if (diffFromFirst) 
-            view1 = nj.stack(Array.from(Array(embeddings.shape[0]-1)).map(e => embeddings.pick(0)));
-        else view1 = embeddings.slice([null,-1]);
-        let view2 = embeddings.slice(1);
-        embeddingsDiff = nj.abs(view1.subtract(view2));
-        [edh, edw] = embeddingsDiff.shape;
-        d = nj.zeros([3, edh, edw]);
-        for(let i=0; i<edw; i++) {
-            for(let j=0; j<edh; j++) {
-                d.set(0,j,i,i);
-                d.set(1,j,i,j);
-                d.set(2,j,i,embeddingsDiff.get(i,j));
+        let toShowNumjsArray;
+        if(enableDiff) {
+            let view1;
+            if (enableDiffFromFirst) 
+                view1 = nj.stack(Array.from(Array(embeddings.shape[0]-1)).map(e => embeddings.pick(0)));
+            else view1 = embeddings.slice([null,-1]);
+            let view2 = embeddings.slice(1);
+            embeddingsDiff = nj.abs(view1.subtract(view2));
+            toShowNumjsArray = embeddingsDiff;
+        } else toShowNumjsArray = embeddings;
+        getDataFor(toShowNumjsArray, handleHeatmapChange);
+    }
+
+    function getDataFor(numjsArray, callback) {
+        [ch, cw] = numjsArray.shape;
+        let [h, w] = [ch, cw];
+        d = nj.zeros([3, h, w]);
+        for(let i=0; i<h; i++) {
+            for(let j=0; j<w; j++) {
+                d.set(0,i,j,j);
+                d.set(1,i,j,i);
+                d.set(2,i,j,numjsArray.get(i,j));
             }
         }
         d = d.transpose(1,2,0);
-        d = d.reshape(edh*edw, 3);
-        // console.log(d.shape, d.slice([0,3]).tolist(), d);
-        if(hm != null) handleHeatmapChange();
+        d = d.reshape(h*w, 3);
+        callback();
     }
 
     onMount(() => {
-        canvas.height = edh;
-        canvas.width = edw;
-        console.debug('component loaded', canvas, d);
+        canvas.height = ch;
+        canvas.width = cw;
         hm = heatmap(canvas);
         handleHeatmapChange();
     })
 
     function handleHeatmapChange() {
+        if(hm == null || d == null) return;
+        hm.resize();
         hm.data(d.tolist());
         hm.radius(hmRad, hmBlur);
         hm.max(hmMax);
@@ -81,8 +90,13 @@
     </div>
     <div class="canvasControls ml-4">
         <div class="field">
-            <Switch bind:checked={diffFromFirst} type="is-primary">First</Switch>
+            <Switch bind:checked={enableDiff} type="is-primary">Show Diff</Switch>
         </div>
+        {#if enableDiff}
+            <div class="field">
+                <Switch bind:checked={enableDiffFromFirst} type="is-primary">First</Switch>
+            </div>
+        {/if}
         <div class="inputControls mt-2">
             <input type="number" bind:value={hmMax} min=0 max=100 step=0.01 on:change={handleHeatmapChange} />
             <input class="ml-2" type="number" bind:value={hmRad} min=0 max=100 step=0.01 on:change={handleHeatmapChange} />
