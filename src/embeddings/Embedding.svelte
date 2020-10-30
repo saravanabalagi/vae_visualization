@@ -1,5 +1,5 @@
 <script>
-    import { modEmbedding, inputImageFile, inputImage } from "stores";
+    import { modEmbedding, customImg, serverImgPath } from "../stores";
     import { Button, Tooltip } from 'svelma';
     
     let embedding = [];
@@ -10,8 +10,8 @@
     // use on change to avoid multiple requests
     // $:{ modEmbedding.set(values); }
 
-    $:if ($inputImage != null) promise = getEmbeddingForImgPath($inputImage);
-    else promise = getEmbedding($inputImageFile);
+    $:if ($serverImgPath != null) promise = getEmbeddingForImgPath($serverImgPath);
+    else promise = getEmbedding($customImg);
 
     async function getEmbedding(inputImageFile) {
         const url = '/embedding';

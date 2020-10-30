@@ -7,7 +7,7 @@
 
     const indexRangePromise = getIndexRange();
     async function getIndexRange() {
-        const url = '/images'
+        const url = '/image_paths/';
         const res = await fetch(url);
         const resJson = await res.json();
         ({min, max} = resJson);

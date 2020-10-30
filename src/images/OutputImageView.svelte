@@ -1,5 +1,5 @@
 <script>
-    import { modEmbedding, outputImage } from 'stores';
+    import { modEmbedding, outputImage } from '../stores';
     import ImageView from './ImageView.svelte';
     import { Tooltip } from 'svelma'; 
 

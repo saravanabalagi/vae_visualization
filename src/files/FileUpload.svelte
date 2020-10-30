@@ -1,5 +1,5 @@
 <script>
-    import { inputImage, inputImageFile } from 'stores';
+    import { serverImgPath, customImg } from '../stores';
     import { Button } from 'svelma';
 
     let fileUploadElement;
@@ -8,8 +8,8 @@
         if(files && files[0]) {
             let reader = new FileReader();
             reader.onload = (ev) => {
-                inputImage.set(ev.target.result);
-                inputImageFile.set(files[0]);
+                serverImgPath.set(null);
+                customImg.set(files[0]);
             }
             reader.readAsDataURL(files[0]);
         }

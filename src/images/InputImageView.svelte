@@ -1,14 +1,14 @@
 <script>
     import ImageView from './ImageView.svelte';
-    import { inputImage } from 'stores';
+    import { serverImgPath } from '../stores';
     import { Tooltip } from 'svelma';
+    import path from 'path';
 
     let imgsDir, promise, imgIdx;
     let numFiles, firstFileIdx, lastFileIdx, fileExt, numDigits;
-    $: if($inputImage) {
-        let inputFilePathTokens = $inputImage.split('/');
-        imgIdx = parseInt(inputFilePathTokens[inputFilePathTokens.length-1].split('.')[0]);
-        imgsDir = inputFilePathTokens.slice(2, -1).join('/');
+    $: if($serverImgPath) {
+        imgIdx = path.basename($serverImgPath, path.extname($serverImgPath));
+        imgsDir = path.basename(path.dirname($serverImgPath));
         promise = getInputImagesInfo(imgsDir);
     }
  
@@ -19,21 +19,19 @@
 
         if(response.ok) {
             numFiles = parseInt(responseJson.num_files);
-            let filename = responseJson.first;
-            let filenameTokens = filename.split('.');
-            numDigits = filenameTokens[0].length;
-            fileExt = filenameTokens[1];
-            firstFileIdx = parseInt(filenameTokens[0]);
-            lastFileIdx = parseInt(responseJson.last.split('.')[0]);
+            fileExt = path.extname(responseJson.first);
+            numDigits = path.basename(responseJson.first, fileExt).length;
+            firstFileIdx = parseInt(path.basename(responseJson.first, fileExt));
+            lastFileIdx = parseInt(path.basename(responseJson.last, fileExt));
             return responseJson;
         }
         else throw new Error(responseJson);
     }
 
     function changeIdx() {
-        let inputFilePathTokens = $inputImage.split('/');
+        let inputFilePathTokens = $serverImgPath.split('/');
         let imgIdxPadded = String(imgIdx).padStart(numDigits, '0');
-        let imgFilename = `${imgIdxPadded}.${fileExt}`;
+        let imgFilename = imgIdxPadded + fileExt;
         inputFilePathTokens[inputFilePathTokens.length-1] = imgFilename;
         let newImgPath = inputFilePathTokens.join('/');
         getIdxForImgPath(newImgPath);
@@ -46,7 +44,7 @@
 
         if(response.ok) {
             let idx = responseJson.idx;
-            inputImage.set(imgPath);
+            serverImgPath.set(imgPath);
             return responseJson;
         }
         else throw new Error(responseJson);
@@ -73,7 +71,7 @@
             {/if}
         </div>
     </div>
-    <ImageView image={$inputImage} />
+    <ImageView image={$serverImgPath} />
     {#if imgsDir}
         <div class="imageIdxChanger mt-3 mx-3">
             <div on:click={()=> {imgIdx = (imgIdx-1>=firstFileIdx) ? imgIdx-1 : imgIdx; changeIdx()}}><i class="mx-3 fas fa-chevron-left"></i></div>

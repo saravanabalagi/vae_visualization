@@ -4,8 +4,8 @@
 	import InputImageView from './images/InputImageView.svelte';
 	import ImageGrid from './images/ImageGrid.svelte';
 	import VideoView from './videos/VideoView.svelte';
-	import {inputImageFile, inputImage} from 'stores';
-	import {Tabs, Tab} from 'svelma';
+	import { customImg, serverImgPath } from 'stores';
+	import { Tabs, Tab } from 'svelma';
 
 	import 'bulma/css/bulma.css';
 	import '@fortawesome/fontawesome-free/css/all.css';
@@ -19,7 +19,7 @@
 			<Tab label="Image">
 				<div class="ml">
 					<InputImageView />
-					{#if $inputImageFile != null || $inputImage != null}
+					{#if $customImg != null || $serverImgPath != null}
 						<Embedding />
 						<OutputImageView />
 					{/if}
@@ -28,7 +28,7 @@
 			<Tab label="Video">
 				<div class="video">
 					<InputImageView />
-					{#if $inputImageFile != null || $inputImage != null}
+					{#if $customImg != null || $serverImgPath != null}
 						<VideoView />
 					{/if}
 				</div>

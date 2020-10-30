@@ -1,5 +1,5 @@
 <script>
-    import {inputImage} from 'stores';
+    import { serverImgPath, customImg } from '../stores';
     import ImageView from "./ImageView.svelte";
     export let idx;
     export let setLoading;
@@ -17,7 +17,8 @@
     }
 
     function saveImgPathToStore() {
-        inputImage.set(imagePath);
+        customImg.set(null);
+        serverImgPath.set(imagePath);
     }
 </script>
 

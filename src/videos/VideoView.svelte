@@ -1,15 +1,14 @@
 <script>
-    import {inputImage} from 'stores';
+    import { serverImgPath } from '../stores';
     import EmbeddingsDiff from '../embeddings/EmbeddingsDiff.svelte';
     import { Tooltip } from 'svelma';
+    import path from 'path';
 
     let imgs_dir = "";
     let embeddings = [];
     let promise;
-    $: if($inputImage != null) {
-        let filename = $inputImage;
-        let imgs_dir_tokens = filename.split('/');
-        imgs_dir = imgs_dir_tokens.slice(2, -1).join('/');
+    $: if($serverImgPath != null) {
+        imgs_dir = path.dirname($serverImgPath.replace('/images', ''));
         promise = getEmbeddings(imgs_dir);
     }
 
