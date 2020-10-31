@@ -1,19 +1,20 @@
 <script>
-    import { serverImgPath, customImg } from '../stores';
-    import { Button } from 'svelma';
+import { customImg } from '../stores';
+import { setImgPathVars } from '../serverImgStores';
+import { Button } from 'svelma';
 
-    let fileUploadElement;
-    let files;
-    function onFileUpload(e) {
-        if(files && files[0]) {
-            let reader = new FileReader();
-            reader.onload = (ev) => {
-                serverImgPath.set(null);
-                customImg.set(files[0]);
-            }
-            reader.readAsDataURL(files[0]);
+let fileUploadElement;
+let files;
+function onFileUpload(e) {
+    if(files && files[0]) {
+        let reader = new FileReader();
+        reader.onload = (ev) => {
+            setImgPathVars.set(null);
+            customImg.set(files[0]);
         }
+        reader.readAsDataURL(files[0]);
     }
+}
 </script>
 
 <Button type="is-info" on:click={() => fileUploadElement.click()}>
@@ -22,7 +23,7 @@
 </Button>
 
 <style>
-    input[type="file"] {
-        display: none;
-    }
+input[type="file"] {
+    display: none;
+}
 </style>

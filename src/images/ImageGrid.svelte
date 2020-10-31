@@ -1,32 +1,32 @@
 <script>
-    import FileUpload from "../files/FileUpload.svelte";
-    import ServerImage from "./ServerImage.svelte";
-    import { Button } from 'svelma';
+import FileUpload from "../files/FileUpload.svelte";
+import ServerImage from "./ServerImage.svelte";
+import { Button } from 'svelma';
 
-    let min = 0, max;
+let min = 0, max;
 
-    const indexRangePromise = getIndexRange();
-    async function getIndexRange() {
-        const url = '/image_paths/';
-        const res = await fetch(url);
-        const resJson = await res.json();
-        ({min, max} = resJson);
-        return resJson;
-    }
+const indexRangePromise = getIndexRange();
+async function getIndexRange() {
+    const url = '/image_paths/';
+    const res = await fetch(url);
+    const resJson = await res.json();
+    ({min, max} = resJson);
+    return resJson;
+}
 
-    const numImages = 20;
-    const numRows = 2;
-    $: numColumns = Math.ceil(numImages / numRows);
-    $: randomIndices = getRandomIndices(numImages, min, max);
-    const loadingImages = Array(numImages).fill(false);
+const numImages = 20;
+const numRows = 2;
+$: numColumns = Math.ceil(numImages / numRows);
+$: randomIndices = getRandomIndices(numImages, min, max);
+const loadingImages = Array(numImages).fill(false);
 
-    function getRandomIndices(numImages, min, max) {
-        return Array.from({length: numImages}, 
-                            () => Math.floor(Math.random() * (max+1 - min) + min));
-    }
+function getRandomIndices(numImages, min, max) {
+    return Array.from({length: numImages}, 
+                        () => Math.floor(Math.random() * (max+1 - min) + min));
+}
 
-    function randomize() { randomIndices = getRandomIndices(numImages, min, max); }
-    function setLoading(idx, loadingBool) { loadingImages[idx] = loadingBool; }
+function randomize() { randomIndices = getRandomIndices(numImages, min, max); }
+function setLoading(idx, loadingBool) { loadingImages[idx] = loadingBool; }
 </script>
 
 {#await indexRangePromise}
@@ -50,23 +50,23 @@
 {/await}
 
 <style>
-    .custom-grid-wrapper {
-        display: flex;
-    }
-    .custom-grid {
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .custom-grid-column {
-        flex: var(--maxWidth);
-        max-width: var(--maxWidth);
-    }
-    .button-row {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
-        padding: 10px;
-        background-color: #333;
-    }
+.custom-grid-wrapper {
+    display: flex;
+}
+.custom-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+.custom-grid-column {
+    flex: var(--maxWidth);
+    max-width: var(--maxWidth);
+}
+.button-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #333;
+}
 </style>

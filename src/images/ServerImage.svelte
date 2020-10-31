@@ -1,30 +1,33 @@
 <script>
-    import { serverImgPath, customImg } from '../stores';
-    import ImageView from "./ImageView.svelte";
-    export let idx;
-    export let setLoading;
-    let imagePath;
+import { customImg } from '../stores';
+import { setImgPathVars } from '../serverImgStores';
+import ImageView from "./ImageView.svelte";
+import path from 'path';
 
-    $: imagePathPromise = getImagePath(idx);
-    async function getImagePath(idx) {
-        setLoading(idx, true);
-        const url = `/image_paths/${idx}`
-        const res = await fetch(url);
-        const resJson = await res.json();
-        setLoading(idx, false);
-        imagePath = resJson.path;
-        return resJson.path;
-    }
+export let idx;
+export let setLoading;
+let imgPath;
 
-    function saveImgPathToStore() {
-        customImg.set(null);
-        serverImgPath.set(imagePath);
-    }
+$: imagePathPromise = getImagePath(idx);
+async function getImagePath(idx) {
+    setLoading(idx, true);
+    const url = `/image_paths/${idx}`
+    const res = await fetch(url);
+    const resJson = await res.json();
+    setLoading(idx, false);
+    imgPath = resJson.path;
+    return resJson.path;
+}
+
+function saveImgPathToStore() {
+    customImg.set(null);
+    setImgPathVars(imgPath);
+}
 </script>
 
 <div class="serverImage" on:click={saveImgPathToStore}>
-    {#if imagePath != null}
-        <ImageView image={imagePath} />
+    {#if imgPath != null}
+        <ImageView image={imgPath} />
     {/if}
 </div>
 
@@ -32,5 +35,4 @@
 .serverImage {
     cursor: pointer;
 }
-
 </style>

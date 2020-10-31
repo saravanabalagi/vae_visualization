@@ -1,8 +1,6 @@
 import { writable } from 'svelte/store';
 
 export const customImg = writable();
-export const serverImgPath = writable();
-
 
 export const embedding = writable([]);
 export const modEmbedding = writable([]);

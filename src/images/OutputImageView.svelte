@@ -1,29 +1,29 @@
 <script>
-    import { modEmbedding, outputImage } from '../stores';
-    import ImageView from './ImageView.svelte';
-    import { Tooltip } from 'svelma'; 
+import { modEmbedding, outputImage } from '../stores';
+import ImageView from './ImageView.svelte';
+import { Tooltip } from 'svelma'; 
 
-    $:promise = getOutputImage($modEmbedding);
-    async function getOutputImage(modEmbedding) {
-        const url = '/decoded_img';
-		const content = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({embedding: modEmbedding})
-        };
-        
-        if(modEmbedding.length === 0) return;
-        let response = await fetch(url, content);
-        // display blob image https://stackoverflow.com/a/43871843/3125070
-		const urlCreator = window.URL || window.webkitURL;
-        const responseImage = urlCreator.createObjectURL(await response.blob());
+$:promise = getOutputImage($modEmbedding);
+async function getOutputImage(modEmbedding) {
+    const url = '/decoded_img';
+    const content = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({embedding: modEmbedding})
+    };
+    
+    if(modEmbedding.length === 0) return;
+    let response = await fetch(url, content);
+    // display blob image https://stackoverflow.com/a/43871843/3125070
+    const urlCreator = window.URL || window.webkitURL;
+    const responseImage = urlCreator.createObjectURL(await response.blob());
 
-        if(response.ok) {
-            outputImage.set(responseImage);
-            return responseImage;
-        }
-        else throw new Error(await response.json());
+    if(response.ok) {
+        outputImage.set(responseImage);
+        return responseImage;
     }
+    else throw new Error(await response.json());
+}
 </script>
 
 <div class="p-3">

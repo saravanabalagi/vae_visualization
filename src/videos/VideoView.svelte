@@ -1,28 +1,23 @@
 <script>
-    import { serverImgPath } from '../stores';
-    import EmbeddingsDiff from '../embeddings/EmbeddingsDiff.svelte';
-    import { Tooltip } from 'svelma';
-    import path from 'path';
+import { imgDir } from '../serverImgStores';
+import EmbeddingsDiff from '../embeddings/EmbeddingsDiff.svelte';
+import { Tooltip } from 'svelma';
+import path from 'path';
 
-    let imgs_dir = "";
-    let embeddings = [];
-    let promise;
-    $: if($serverImgPath != null) {
-        imgs_dir = path.dirname($serverImgPath.replace('/images', ''));
-        promise = getEmbeddings(imgs_dir);
+let embeddings = [];
+let promise = getEmbeddings($imgDir);
+
+async function getEmbeddings(dir) {
+    const url = `/embeddings/${dir}`;
+    let response = await fetch(url);
+    let responseJson = await response.json();
+
+    if(response.ok) {
+        embeddings = responseJson.embeddings || [];
+        return responseJson;
     }
-
-    async function getEmbeddings(dir) {
-        const url = `/embeddings/${dir}`;
-        let response = await fetch(url);
-        let responseJson = await response.json();
-
-        if(response.ok) {
-            embeddings = responseJson.embeddings || [];
-            return responseJson;
-        }
-        else throw new Error(responseJson);
-    }
+    else throw new Error(responseJson);
+}
 </script>
 
 <div class="EmbeddingsView p-3">

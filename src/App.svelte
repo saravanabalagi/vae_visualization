@@ -1,15 +1,16 @@
 <script>
-	import Embedding from './embeddings/Embedding.svelte';
-	import OutputImageView from './images/OutputImageView.svelte';
-	import InputImageView from './images/InputImageView.svelte';
-	import ImageGrid from './images/ImageGrid.svelte';
-	import VideoView from './videos/VideoView.svelte';
-	import { customImg, serverImgPath } from 'stores';
-	import { Tabs, Tab } from 'svelma';
+import Embedding from './embeddings/Embedding.svelte';
+import OutputImageView from './images/OutputImageView.svelte';
+import InputImageView from './images/InputImageView.svelte';
+import ImageGrid from './images/ImageGrid.svelte';
+import VideoView from './videos/VideoView.svelte';
+import { customImg } from './stores';
+import { imgPath } from './serverImgStores'
+import { Tabs, Tab } from 'svelma';
 
-	import 'bulma/css/bulma.css';
-	import '@fortawesome/fontawesome-free/css/all.css';
-	import './main.css'
+import 'bulma/css/bulma.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+import './main.css'
 </script>
 
 <div class="app">
@@ -19,7 +20,7 @@
 			<Tab label="Image">
 				<div class="ml">
 					<InputImageView />
-					{#if $customImg != null || $serverImgPath != null}
+					{#if $customImg != null || $imgPath != null}
 						<Embedding />
 						<OutputImageView />
 					{/if}
@@ -28,7 +29,7 @@
 			<Tab label="Video">
 				<div class="video">
 					<InputImageView />
-					{#if $customImg != null || $serverImgPath != null}
+					{#if $customImg != null || $imgPath != null}
 						<VideoView />
 					{/if}
 				</div>
@@ -38,17 +39,17 @@
 </div>
 
 <style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	}
-	.mainView {
-		flex: 1;
-		width: 100%;
-	}
-	.ml, .video {
-		display: flex;
-		flex-direction: row;
-	}
+.app {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.mainView {
+	flex: 1;
+	width: 100%;
+}
+.ml, .video {
+	display: flex;
+	flex-direction: row;
+}
 </style>

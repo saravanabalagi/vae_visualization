@@ -1,5 +1,5 @@
 <script>
-    export let image;
+export let image;
 </script>
 
 <div class="imageView">
@@ -11,8 +11,8 @@
 </div>
 
 <style>
-    .imageView img {
-        width: 100%;
-        display: block;
-    }
+.imageView img {
+    width: 100%;
+    display: block;
+}
 </style>

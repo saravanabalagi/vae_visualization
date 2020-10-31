@@ -1,62 +1,63 @@
 <script>
-    import { modEmbedding, customImg, serverImgPath } from "../stores";
-    import { Button, Tooltip } from 'svelma';
-    
-    let embedding = [];
-    let values = [];
-    let promise;
+import { modEmbedding, customImg } from '../stores';
+import { imgPath } from '../serverImgStores'
+import { Button, Tooltip } from 'svelma';
+import path from 'path';
 
-    // values are modified as slider moves
-    // use on change to avoid multiple requests
-    // $:{ modEmbedding.set(values); }
+let embedding = [];
+let values = [];
+let promise;
 
-    $:if ($serverImgPath != null) promise = getEmbeddingForImgPath($serverImgPath);
-    else promise = getEmbedding($customImg);
+// values are modified as slider moves
+// use on change to avoid multiple requests
+// $:{ modEmbedding.set(values); }
 
-    async function getEmbedding(inputImageFile) {
-        const url = '/embedding';
-        const data = new FormData();
-        data.append('image', inputImageFile)
-        const content = {
-            method: 'POST',
-            body: data
-        };
-        let response = await fetch(url, content);
-        let responseJson = await response.json();
+$:if ($imgPath != null) promise = getEmbeddingForImgPath($imgPath);
+else promise = getEmbedding($customImg);
 
-        if(response.ok) {
-            embedding = responseJson.embedding || [];
-            values = Array.from(embedding);
-            modEmbedding.set(values);
-            return responseJson;
-        }
-        else throw new Error(responseJson);
-    }
+async function getEmbedding(inputImageFile) {
+    const url = '/embedding';
+    const data = new FormData();
+    data.append('image', inputImageFile)
+    const content = {
+        method: 'POST',
+        body: data
+    };
+    let response = await fetch(url, content);
+    let responseJson = await response.json();
 
-    async function getEmbeddingForImgPath(imgPath) {
-        const url = imgPath.replace('/images', '/embedding');
-        let response = await fetch(url);
-        let responseJson = await response.json();
-
-        if(response.ok) {
-            embedding = responseJson.embedding || [];
-            values = Array.from(embedding);
-            modEmbedding.set(values);
-            return responseJson;
-        }
-        else throw new Error(responseJson);
-    }
-
-    function setModEmbedding() {
+    if(response.ok) {
+        embedding = responseJson.embedding || [];
+        values = Array.from(embedding);
         modEmbedding.set(values);
+        return responseJson;
     }
+    else throw new Error(responseJson);
+}
 
-    function resetEmbeddingAt(i) {
-        if(i!=null) values[i] = embedding[i];
-        else values = [...embedding];
+async function getEmbeddingForImgPath(imgPath) {
+    const url = path.join('/embedding', imgPath);
+    let response = await fetch(url);
+    let responseJson = await response.json();
+
+    if(response.ok) {
+        embedding = responseJson.embedding || [];
+        values = Array.from(embedding);
         modEmbedding.set(values);
+        return responseJson;
     }
+    else throw new Error(responseJson);
+}
 
+function setModEmbedding() {
+    modEmbedding.set(values);
+}
+
+function resetEmbeddingAt(i) {
+    if(i!=null) values[i] = embedding[i];
+    else values = [...embedding];
+    modEmbedding.set(values);
+}
 </script>
 
 <div class="embeddingView p-3">
@@ -97,28 +98,28 @@
 </div>
 
 <style>
-    .embeddingView {
-        padding: 10px;
-        min-width: 200px;
-    }
-    .numDisplay {
-        display: inline-block;
-        width: 50px;
-    }
-    .sliderRow {    
-        display: flex;
-        align-items: center;
-    }
-    .embeddingSlidersWrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .undo { 
-        transition: opacity 0.3s ease-in-out; 
-        opacity: 0; 
-    }
-    .undo.show { opacity:0.7; }
-    .sliderRow:hover .undo { opacity: 0.7; }
-    .sliderRow:hover .undo:hover { opacity: 1; }
+.embeddingView {
+    padding: 10px;
+    min-width: 200px;
+}
+.numDisplay {
+    display: inline-block;
+    width: 50px;
+}
+.sliderRow {    
+    display: flex;
+    align-items: center;
+}
+.embeddingSlidersWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.undo { 
+    transition: opacity 0.3s ease-in-out; 
+    opacity: 0; 
+}
+.undo.show { opacity:0.7; }
+.sliderRow:hover .undo { opacity: 0.7; }
+.sliderRow:hover .undo:hover { opacity: 1; }
 </style>
