@@ -3,24 +3,25 @@ import FileUpload from "../files/FileUpload.svelte";
 import ServerImage from "./ServerImage.svelte";
 import { Button } from 'svelma';
 
-let min = 0, max;
+let folders = [];
+let min, max;
 
-const indexRangePromise = getIndexRange();
-async function getIndexRange() {
-    const url = '/image_paths/';
+const indexRangePromise = getImgFolders();
+async function getImgFolders() {
+    const url = '/images'
     const res = await fetch(url);
     const resJson = await res.json();
-    ({min, max} = resJson);
+    (folders = resJson.files);
     return resJson;
 }
 
 const numImages = 20;
 const numRows = 2;
 $: numColumns = Math.ceil(numImages / numRows);
-$: randomIndices = getRandomIndices(numImages, min, max);
+$: randomIndices = getRandomIndices(numImages, 0, folders.length-1);
 const loadingImages = Array(numImages).fill(false);
 
-function getRandomIndices(numImages, min, max) {
+function getRandomIndices(numImages, min, max) {        // min max inclusive
     return Array.from({length: numImages}, 
                         () => Math.floor(Math.random() * (max+1 - min) + min));
 }
@@ -37,7 +38,7 @@ function setLoading(idx, loadingBool) { loadingImages[idx] = loadingBool; }
             {#each Array.from(Array(numColumns).keys()) as c, i}
                 <div class="custom-grid-column" idx={c} style="--maxWidth:{100/numColumns + '%'}">
                     {#each randomIndices.slice(c*numRows, c*numRows+numRows) as idx, j}
-                        <ServerImage {idx} {setLoading} />
+                        <ServerImage imgDir={folders[idx]} {setLoading} />
                     {/each}
                 </div>
             {/each}
