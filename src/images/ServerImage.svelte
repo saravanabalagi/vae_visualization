@@ -15,11 +15,11 @@ let min, max, numDigits, fileExt, imgIdx;
 
 $: imgRangePromise = getIndexRange(imgDir);
 async function getIndexRange(imgDir) {
-    setLoading(imgDir, true);
+    setLoading(true);
     const url = `/images/${imgDir}?info`;
     const res = await fetch(url);
     const resJson = await res.json();
-    setLoading(imgDir, false);
+    setLoading(false);
     min = parseInt(resJson.first.split('.')[0]);
     max = parseInt(resJson.last.split('.')[0]);
     fileExt = path.extname(resJson.first);
