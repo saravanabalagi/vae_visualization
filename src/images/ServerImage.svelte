@@ -1,42 +1,38 @@
 <script>
-import { customImg } from '../stores';
-import { getImgFilePath, 
-         numDigits as numDigitsStore, 
-         fileExt as fileExtStore, 
-         imgDir as imgDirStore, 
-         imgIdx as imgIdxStore} from '../serverImgStores';
+import { customImg as customImgStore } from '../stores';
+import { imgDir as imgDirStore,
+         imgIdx as imgIdxStore, 
+         imgPath as imgPathStore } from '../serverImgStores';
 import ImageView from "./ImageView.svelte";
-import path from 'path';
 
 export let imgDir;
 export let setLoading;
 let imgPath;
-let min, max, numDigits, fileExt, imgIdx;
+let imgIdx;
+let files = [];
 
-$: imgRangePromise = getIndexRange(imgDir);
-async function getIndexRange(imgDir) {
+$: getFilesPromise = getFiles(imgDir);
+async function getFiles(imgDir) {
     setLoading(true);
-    const url = `/images/${imgDir}?info`;
+    const url = `/images/${imgDir}`;
     const res = await fetch(url);
     const resJson = await res.json();
+    files = resJson.filter(f => f.type === 'file').map(f => f.name);
     setLoading(false);
-    min = parseInt(resJson.first.split('.')[0]);
-    max = parseInt(resJson.last.split('.')[0]);
-    fileExt = path.extname(resJson.first);
-    numDigits = path.basename(resJson.first, fileExt).length;
 }
 
-$: if(max > 0) {
+$: if(files.length > 0) {
+    const min = 0;
+    const max = files.length;
     imgIdx = Math.floor(Math.random() * (max+1 - min) + min);
-    imgPath = `/images/${getImgFilePath([imgDir, imgIdx, numDigits, fileExt])}`;
+    imgPath = `/images/${imgDir}/${files[imgIdx]}`;
 }
 
 function saveImgPathToStore() {
-    customImg.set(null);
-    numDigitsStore.set(numDigits);
-    fileExtStore.set(fileExt);
-    imgDirStore.set(imgDir);
+    customImgStore.set(null);
+    imgPathStore.set(imgPath);
     imgIdxStore.set(imgIdx);
+    imgDirStore.set(imgDir);
 }
 </script>
 

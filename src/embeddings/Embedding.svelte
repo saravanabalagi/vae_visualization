@@ -1,6 +1,6 @@
 <script>
 import { modEmbedding, customImg } from '../stores';
-import { imgPath } from '../serverImgStores'
+import { imgPath } from '../serverImgStores';
 import { Button, Tooltip } from 'svelma';
 import path from 'path';
 
@@ -13,7 +13,10 @@ let promise;
 // $:{ modEmbedding.set(values); }
 
 $:if ($imgPath != null) promise = getEmbeddingForImgPath($imgPath);
-else promise = getEmbedding($customImg);
+else if($customImg != null) promise = getEmbedding($customImg);
+
+const getMean = (array) => array.reduce((a, b) => a + b, 0) / array.length;
+$: valuesMean = getMean(values);
 
 async function getEmbedding(inputImageFile) {
     const url = '/embedding';
@@ -36,7 +39,7 @@ async function getEmbedding(inputImageFile) {
 }
 
 async function getEmbeddingForImgPath(imgPath) {
-    const url = path.join('/embedding', imgPath);
+    const url = path.join('/embedding', imgPath.slice(7));
     let response = await fetch(url);
     let responseJson = await response.json();
 
@@ -53,6 +56,12 @@ function setModEmbedding() {
     modEmbedding.set(values);
 }
 
+function setMean(e) {
+    const m = parseFloat(e.target.value);
+    values = values.map(e => m);
+    modEmbedding.set(values);
+}
+
 function resetEmbeddingAt(i) {
     if(i!=null) values[i] = embedding[i];
     else values = [...embedding];
@@ -62,7 +71,7 @@ function resetEmbeddingAt(i) {
 
 <div class="embeddingView p-3">
     <div class="header-space-between mb-3">
-        <div class="is-size-5">Embedding</div>
+        <div class="is-size-5 pr-3">Embedding</div>
         <div>
             {#await promise}
                 <i class="fas fa-circle-notch fa-spin has-text-info"></i>
@@ -77,6 +86,16 @@ function resetEmbeddingAt(i) {
     </div>
     <div class="embeddingSlidersWrapper">
         {#if embedding.length > 0}
+            <div class="sliderRow master">
+                <input type=range min={-1.5} max={1.5} step={0.01} value={valuesMean} on:change={setMean} />
+                <div class="mx-3 numDisplay has-text-right">{valuesMean.toFixed(2)}</div>
+                <Tooltip label={valuesMean.toFixed(2)} position="is-right">
+                    <div class="undo show"
+                        on:click={() => resetEmbeddingAt()}>
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                </Tooltip>
+            </div>
             <div>
                 {#each embedding as number, i}
                     <div class="sliderRow">
@@ -100,7 +119,7 @@ function resetEmbeddingAt(i) {
 <style>
 .embeddingView {
     padding: 10px;
-    min-width: 200px;
+    min-width: 400px;
 }
 .numDisplay {
     display: inline-block;
@@ -109,11 +128,14 @@ function resetEmbeddingAt(i) {
 .sliderRow {    
     display: flex;
     align-items: center;
+    padding: 0 20px;
 }
 .embeddingSlidersWrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    height: 70vh;
 }
 .undo { 
     transition: opacity 0.3s ease-in-out; 
@@ -122,4 +144,10 @@ function resetEmbeddingAt(i) {
 .undo.show { opacity:0.7; }
 .sliderRow:hover .undo { opacity: 0.7; }
 .sliderRow:hover .undo:hover { opacity: 1; }
+
+.sliderRow.master {
+    padding: 10px 20px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 20px;
+}
 </style>

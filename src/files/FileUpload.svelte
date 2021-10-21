@@ -1,6 +1,6 @@
 <script>
 import { customImg } from '../stores';
-import { imgIdx } from '../serverImgStores';
+import { imgIdx, imgDir, imgPath } from '../serverImgStores';
 import { Button } from 'svelma';
 
 let fileUploadElement;
@@ -9,6 +9,8 @@ function onFileUpload(e) {
     if(files && files[0]) {
         let reader = new FileReader();
         reader.onload = (ev) => {
+            imgPath.set(null);
+            imgDir.set(null)
             imgIdx.set(null);
             customImg.set(files[0]);
         }

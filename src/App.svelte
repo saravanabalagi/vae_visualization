@@ -26,14 +26,14 @@ import './main.css'
 					{/if}
 				</div>
 			</Tab>
-			<Tab label="Video">
+			<!-- <Tab label="Video">
 				<div class="video">
 					<InputImageView />
 					{#if $customImg != null || $imgPath != null}
 						<VideoView />
 					{/if}
 				</div>
-			</Tab>
+			</Tab> -->
 		</Tabs>
 	</div>
 </div>

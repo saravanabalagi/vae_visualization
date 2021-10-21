@@ -28,7 +28,7 @@ async function getOutputImage(modEmbedding) {
 
 <div class="p-3">
     <div class="header-space-between mb-3">
-        <div class="is-size-5">Reconstruction</div>
+        <div class="is-size-5 pr-3">Reconstruction</div>
         <div>
             {#await promise}
                 <i class="fas fa-circle-notch fa-spin has-text-info"></i>

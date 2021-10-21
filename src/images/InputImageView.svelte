@@ -1,38 +1,36 @@
 <script>
 import ImageView from './ImageView.svelte';
-import { imgDir, imgIdx, fileExt, imgPath } from '../serverImgStores';
+import { imgPath, imgDir, imgIdx } from '../serverImgStores';
 import { Tooltip } from 'svelma';
-import path from 'path';
 
 let promise;
-let numFiles, firstFileIdx, lastFileIdx;
+let files = [];
 $: if($imgDir != null) promise = getInputImagesInfo($imgDir);
 
 async function getInputImagesInfo(dir) {
-    const url = `/images/${dir}?info`;
-    let response = await fetch(url);
-    let responseJson = await response.json();
-
-    if(response.ok) {
-        numFiles = responseJson.num_files;
-        firstFileIdx = parseInt(path.basename(responseJson.first, $fileExt));
-        lastFileIdx = parseInt(path.basename(responseJson.last, $fileExt));
-        return responseJson;
+    const url = `/images/${dir}`;
+    const res = await fetch(url);
+    const resJson = await res.json();
+    if(res.ok) {
+        files = resJson.filter(f => f.type === 'file').map(f => f.name);
+        return resJson;
     }
-    else throw new Error(responseJson);
+    else throw new Error(resJson);
 }
 
 function changeIdx(e, change) {
-    let newIdx = (e != null) ? e.target.value : $imgIdx + change;
-    if (newIdx >= firstFileIdx && newIdx <= lastFileIdx) {
+    const newIdx = (e != null) ? parseInt(e.target.value) : $imgIdx + change;
+    const newImgPath = `/images/${$imgDir}/${files[newIdx]}`;
+    if (newIdx >= 0 && newIdx <= files.length) {
         imgIdx.set(newIdx);
+        imgPath.set(newImgPath);
     } else console.error(`Cannot change idx ${$imgIdx} to ${newIdx}; out of bounds error`);
 }
 </script>
 
 <div class="p-3">
     <div class="header-space-between mb-3">
-        <div class="is-size-5">Input</div>
+        <div class="is-size-5 pr-3">Input</div>
         <div>
             {#if promise}
                 {#await promise}
@@ -49,11 +47,11 @@ function changeIdx(e, change) {
             {/if}
         </div>
     </div>
-    <ImageView image={($imgPath != null) ? path.join('/images', $imgPath || '') : null} />
     {#if $imgDir}
+        <ImageView image={`${$imgPath}?processed`} />
         <div class="imageIdxChanger mt-3 mx-3">
             <div on:click={()=> {changeIdx(null, -1)}}><i class="mx-3 fas fa-chevron-left"></i></div>
-            <input type="range" min={firstFileIdx} max={lastFileIdx} value={$imgIdx} on:change={changeIdx} />
+            <input type="range" min={0} max={files.length} value={$imgIdx} on:change={changeIdx} />
             <div on:click={()=> {changeIdx(null, 1)}}><i class="mx-3 fas fa-chevron-right"></i></div>
         </div>
         <div class="folderWrapper mt-1 mx-3">
@@ -62,7 +60,7 @@ function changeIdx(e, change) {
         </div>
         <div class="folderWrapper mt-1 mx-3">
             <i class="m-1 fas fa-image has-text-info"></i> 
-            <div class="m-1">{$imgIdx} / {numFiles}</div>
+            <div class="m-1">{$imgIdx} / {files.length}</div>
         </div>
     {/if}
 </div>

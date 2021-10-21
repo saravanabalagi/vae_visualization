@@ -9,7 +9,7 @@ async function getImgFolders() {
     const url = '/images'
     const res = await fetch(url);
     const resJson = await res.json();
-    folders = resJson.files;
+    folders = resJson.filter(f => f.type === 'directory').map(f => f.name);
     return resJson;
 }
 
