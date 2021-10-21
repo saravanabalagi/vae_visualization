@@ -1,104 +1,31 @@
-*Looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
+# VAE Embedding Visualization
 
----
+A small, light and fast reactive web tool to quickly visualize VAE embeddings.
 
-# svelte app
+## Quick Start
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
+### Client
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
-
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
+```
+git clone https://github.com/saravanabalagi/vae_visualization
+cd vae_visualization
+yarn install
+yarn run build
 ```
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+### Server
 
+- Copy given abstract [server.py](server/server.py) file to your python codebase
+    - Only very minimal changes to `server.py` file are needed if your project is based on [PyTorch Lightning](https://github.com/PyTorchLightning/pytorch-lightning)
+    - The code can easily be adapted to load other [Pytorch](https://pytorch.org/) models and with a little more effort, you should be able to load [tensorflow](https://www.tensorflow.org/) models as well just following the structure!
+- Modify it to load your pretrained model from `ckpt_path`
+- Keep all image directories under a single `img_dir` directory
+- Make sure you build the client and modify `VAE_VISUALIZATION_CLIENT_PATH` to point to `repo/public`
+- Run `python server.py <ckpt_path> <img_dir>` to start the server to load from ckpt
 
-## Get started
+The visualization tool should now be available at `http://localhost:5000` in your browser:
 
-Install the dependencies...
+![Screenshot](screenshot.png)
 
-```bash
-cd svelte-app
-npm install
-```
+Note that this is intended for research and development purposes, this requires more tweaks if you plan to use it in production. This tool may not efficiently handle multiple image directories with more than tens of thousands of images due to the way it serves autoindex jsons.
 
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
-
-
-## Building and running in production mode
-
-To create an optimised version of the app:
-
-```bash
-npm run build
-```
-
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
-
-```bash
-node scripts/setupTypeScript.js
-```
-
-Or remove the script via:
-
-```bash
-rm scripts/setupTypeScript.js
-```
-
-## Deploying to the web
-
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
