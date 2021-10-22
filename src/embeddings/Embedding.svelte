@@ -121,6 +121,8 @@ function resetEmbeddingAt(i) {
 
 <style>
 .embeddingView {
+    display: flex;
+    flex-direction: column;
     padding: 10px;
     min-width: 420px;
 }
@@ -144,7 +146,7 @@ function resetEmbeddingAt(i) {
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto;
-    height: 65vh;
+    flex: 1 1 1px;
 }
 .undo { 
     transition: opacity 0.3s ease-in-out; 
@@ -155,6 +157,7 @@ function resetEmbeddingAt(i) {
 .sliderRow:hover .undo:hover { opacity: 1; }
 
 .sliderRow.master {
+    align-self: flex-start;
     padding: 10px 20px;
     background: rgba(0,0,0,0.1);
     border-radius: 20px;
