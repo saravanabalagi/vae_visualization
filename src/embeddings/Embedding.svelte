@@ -71,7 +71,7 @@ function resetEmbeddingAt(i) {
 
 <div class="embeddingView p-3">
     <div class="header-space-between mb-3">
-        <div class="is-size-5 pr-3">Embedding</div>
+        <div class="is-size-5 pr-3">Embedding {values.length > 0 ? `(${values.length} dimensions)`: ''}</div>
         <div>
             {#await promise}
                 <i class="fas fa-circle-notch fa-spin has-text-info"></i>
@@ -87,6 +87,9 @@ function resetEmbeddingAt(i) {
     <div class="embeddingSlidersWrapper">
         {#if embedding.length > 0}
             <div class="sliderRow master">
+                <Tooltip label="Mean" position="is-bottom">
+                    <div class="sliderIdx mr-1">M</div>
+                </Tooltip>
                 <input type=range min={-1.5} max={1.5} step={0.01} value={valuesMean} on:change={setMean} />
                 <div class="mx-3 numDisplay has-text-right">{valuesMean.toFixed(2)}</div>
                 <Tooltip label={valuesMean.toFixed(2)} position="is-right">
@@ -99,6 +102,7 @@ function resetEmbeddingAt(i) {
             <div>
                 {#each embedding as number, i}
                     <div class="sliderRow">
+                        <div class="sliderIdx mr-1">{i}</div>
                         <input type=range min={-1.5} max={1.5} step={0.01} bind:value={values[i]} on:change={setModEmbedding} />
                         <div class="mx-3 numDisplay has-text-right">{values[i].toFixed(2)}</div>
                         <Tooltip label={number.toFixed(2)} position="is-right">
@@ -119,7 +123,7 @@ function resetEmbeddingAt(i) {
 <style>
 .embeddingView {
     padding: 10px;
-    min-width: 400px;
+    min-width: 420px;
 }
 .numDisplay {
     display: inline-block;
@@ -130,12 +134,18 @@ function resetEmbeddingAt(i) {
     align-items: center;
     padding: 0 20px;
 }
+.sliderRow .sliderIdx {
+    text-align: right;
+    color: #999;
+    width: 30px;
+}
+
 .embeddingSlidersWrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto;
-    height: 70vh;
+    height: 65vh;
 }
 .undo { 
     transition: opacity 0.3s ease-in-out; 
