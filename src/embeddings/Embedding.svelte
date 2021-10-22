@@ -3,6 +3,7 @@ import { modEmbedding, customImg } from '../stores';
 import { imgPath } from '../serverImgStores';
 import { Button, Tooltip } from 'svelma';
 import path from 'path';
+import EmbeddingCanvas from './EmbeddingCanvas.svelte';
 
 let embedding = [];
 let values = [];
@@ -84,40 +85,38 @@ function resetEmbeddingAt(i) {
             {/await}
         </div>
     </div>
-    <div class="embeddingSlidersWrapper">
-        {#if embedding.length > 0}
-            <div class="sliderRow master">
-                <Tooltip label="Mean" position="is-bottom">
-                    <div class="sliderIdx mr-1">M</div>
-                </Tooltip>
-                <input type=range min={-1.5} max={1.5} step={0.01} value={valuesMean} on:change={setMean} />
-                <div class="mx-3 numDisplay has-text-right">{valuesMean.toFixed(2)}</div>
-                <Tooltip label={valuesMean.toFixed(2)} position="is-right">
-                    <div class="undo show"
-                        on:click={() => resetEmbeddingAt()}>
-                        <i class="fas fa-undo-alt"></i>
-                    </div>
-                </Tooltip>
+    {#if embedding.length > 0}
+        <div class="sliderRow master">
+            <Tooltip label="Mean" position="is-bottom">
+                <div class="sliderIdx mr-1">M</div>
+            </Tooltip>
+            <input type=range min={-1.5} max={1.5} step={0.01} value={valuesMean} on:change={setMean} />
+            <div class="mx-3 numDisplay has-text-right">{valuesMean.toFixed(2)}</div>
+            <Tooltip label={valuesMean.toFixed(2)} position="is-right">
+                <div class="undo show"
+                on:click={() => resetEmbeddingAt()}>
+                <i class="fas fa-undo-alt"></i>
             </div>
-            <div>
-                {#each embedding as number, i}
-                    <div class="sliderRow">
-                        <div class="sliderIdx mr-1">{i}</div>
-                        <input type=range min={-1.5} max={1.5} step={0.01} bind:value={values[i]} on:change={setModEmbedding} />
-                        <div class="mx-3 numDisplay has-text-right">{values[i].toFixed(2)}</div>
-                        <Tooltip label={number.toFixed(2)} position="is-right">
-                            <div class="undo" 
-                                class:show={(number.toFixed(2) !== values[i].toFixed(2))} 
-                                on:click={() => resetEmbeddingAt(i)}>
-                                <i class="fas fa-undo-alt"></i>
-                            </div>
-                        </Tooltip>
-                    </div>
-                {/each}
-            </div>
-            <Button class="my-3" type="is-danger" on:click={() => resetEmbeddingAt()}>Reset All</Button>
-        {/if}
-    </div>
+        </Tooltip>
+        </div>
+        <EmbeddingCanvas embedding={values} maxValue={1.5} width={140} />
+        <div class="embeddingSlidersWrapper">
+            {#each embedding as number, i}
+                <div class="sliderRow">
+                    <div class="sliderIdx mr-1">{i}</div>
+                    <input type=range min={-1.5} max={1.5} step={0.01} bind:value={values[i]} on:change={setModEmbedding} />
+                    <div class="mx-3 numDisplay has-text-right">{values[i].toFixed(2)}</div>
+                    <Tooltip label={number.toFixed(2)} position="is-right">
+                        <div class="undo" 
+                            class:show={(number.toFixed(2) !== values[i].toFixed(2))} 
+                            on:click={() => resetEmbeddingAt(i)}>
+                            <i class="fas fa-undo-alt"></i>
+                        </div>
+                    </Tooltip>
+                </div>
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style>
