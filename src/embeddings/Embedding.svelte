@@ -1,13 +1,20 @@
 <script>
 import { modEmbedding, customImg } from '../stores';
 import { imgPath } from '../serverImgStores';
-import { Button, Tooltip } from 'svelma';
+import { Tooltip, Tag } from 'svelma';
 import path from 'path';
 import EmbeddingCanvas from './EmbeddingCanvas.svelte';
 
 let embeddingPrev = [];
 let embedding = [];
 let values = [];
+const ops = {
+    'sum': () => values = values.map(v => v + operand),
+    'sub': () => values = values.map(v => v - operand),
+    'mul': () => values = values.map(v => v * operand),
+    'div': () => values = values.map(v => v / operand),
+}
+let operand = 0.1;
 let promise;
 
 $:if ($imgPath != null) promise = getEmbeddingForImgPath($imgPath);
@@ -115,6 +122,12 @@ function resetEmbeddingAt(i) {
             </div>
             {/if}
         </div>
+        <div class="embeddingOperation m-2">
+            <input class="operand" type="number" step={0.01} bind:value={operand} />
+            {#each Object.keys(ops) as op}
+                <div on:click={() => { ops[op](); setModEmbedding(); }} class='operation mx-1'><Tag>{op}</Tag></div>
+            {/each}
+        </div>
         <div class="canvasWrapper">
             <div style="margin-left: 55px">
                 <EmbeddingCanvas embedding={values} maxValue={1.5} width={140} />
@@ -190,7 +203,6 @@ function resetEmbeddingAt(i) {
 .sliderRow:hover .undo:hover { opacity: 1; }
 
 .sliderRow.master {
-    align-self: flex-start;
     padding: 10px 20px;
     background: rgba(0,0,0,0.1);
     border-radius: 20px;
@@ -200,6 +212,18 @@ function resetEmbeddingAt(i) {
     padding: 15px 0;
     display: flex;
     justify-content: space-between;
+}
+.embeddingOperation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.embeddingOperation .operation {
+    cursor: pointer;
+    user-select: none;
+}
+.embeddingOperation .operand {
+    width: 60px;
 }
 .green { color: green; }
 .red { color: red; }
