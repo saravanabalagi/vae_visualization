@@ -34,17 +34,9 @@ $: embedding, draw();
 
 </script>
 
-<div class="canvasWrapper">
-    <canvas
-        bind:this={canvas}
-        {width}
-        height={embedding.length}
-        >
-    </canvas>
-</div>
-
-<style>
-.canvasWrapper {
-    margin: 10px 55px;
-}
-</style>
+<canvas
+    bind:this={canvas}
+    {width}
+    height={embedding.length}
+    >
+</canvas>
