@@ -1,4 +1,6 @@
 <script>
+import { Tag } from 'svelma';
+
 export let image;
 export let advanced = false;
 
@@ -30,6 +32,11 @@ const handleImageLoad = (e) => {
             <input class="scaleInput" type="number" bind:value={scale} step={0.1} max={9.9} min={0.1}>
             x
         </div>
+        <div class="quickScales">
+            {#each [1,2,3,4] as s}
+                <div class="mx-1" on:click={() => scale = s}><Tag type={scale==s?'is-info':'is-none'}>{s}x</Tag></div>
+            {/each}
+        </div>
     </div>
 {/if}
 
@@ -48,5 +55,10 @@ const handleImageLoad = (e) => {
 }
 .info {
     text-align: center;
+}
+.quickScales {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
 }
 </style>
