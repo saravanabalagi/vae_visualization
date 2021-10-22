@@ -48,7 +48,7 @@ function changeIdx(e, change) {
         </div>
     </div>
     {#if $imgDir}
-        <ImageView image={`${$imgPath}?processed`} />
+        <ImageView image={`${$imgPath}?processed`} advanced={true} />
         <div class="imageIdxChanger mt-3 mx-3">
             <div on:click={()=> {changeIdx(null, -1)}}><i class="mx-3 fas fa-chevron-left"></i></div>
             <input type="range" min={0} max={files.length} value={$imgIdx} on:change={changeIdx} />

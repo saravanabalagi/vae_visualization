@@ -43,7 +43,7 @@ async function getOutputImage(modEmbedding) {
     </div>
     <div>
         {#if $outputImage}
-            <ImageView image={$outputImage} />
+            <ImageView image={$outputImage} advanced={true} />
         {/if}
     </div>
 </div>
