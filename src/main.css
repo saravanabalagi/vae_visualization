@@ -23,6 +23,12 @@ html {
 	flex: 1;
 }
 
+input[type='number'], input[type='text'], input[type='email'] {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
+
 ::-webkit-scrollbar {
 	width: 14px;
 }

@@ -56,9 +56,6 @@ const handleImageLoad = (e) => {
     align-items: center;
 }
 .scaleInput {
-    border-top: none;
-    border-left: none;
-    border-right: none;
     width: 50px;
 }
 .info {
