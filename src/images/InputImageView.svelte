@@ -38,7 +38,7 @@ function changeIdx(e, change) {
                 {:then response}
                     <i class="fas fa-check-circle has-text-success"></i>
                 {:catch error}
-                    <Tooltip label={error}>
+                    <Tooltip label={error} position="is-bottom">
                         <i class="fas fa-times-circle has-text-danger"></i>
                     </Tooltip>
                 {/await}
