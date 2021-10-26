@@ -1,6 +1,6 @@
 # VAE Embedding Visualization
 
-A small, light and fast reactive web tool to quickly visualize VAE embeddings.
+A small, light and fast reactive web tool to quickly visualize and analyze VAE embeddings. A very useful tool for manually analyzing and evaluating trained VAE models. Being web-based, it allows quickly presenting and sharing results on the web without having the end user to deal with any code.
 
 ## Quick Start
 

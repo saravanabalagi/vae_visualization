@@ -3,6 +3,7 @@ import Embedding from './embeddings/Embedding.svelte';
 import OutputImageView from './images/OutputImageView.svelte';
 import InputImageView from './images/InputImageView.svelte';
 import ImageGrid from './images/ImageGrid.svelte';
+import { Tag } from 'svelma';
 import { routes, customImg } from './stores';
 import { imgPath } from './serverImgStores';
 
@@ -18,6 +19,8 @@ async function getRoutes() {
 	console.debug('routes', responseJson);
 	routes.set(responseJson);
 }
+
+let collapsed = false;
 </script>
 
 <div class="app">
@@ -27,17 +30,22 @@ async function getRoutes() {
 			Loading...
 		</div>
 	{:then response}
-		<ImageGrid />
-		<div class="flex-row mx-2 mt-2 is-justify-content-space-around">
-			<div class="flex-row m-2">
-				<div class="px-1"><i class="fas fa-check-circle has-text-success"></i></div>
-				<div class="px-1">Model</div>
-				<div class="px-1">{$routes.ckpt_path}</div>
+		<div class="topPanel" class:collapsed>
+			<ImageGrid />
+			<div class="flex-row mx-2 mt-2 is-justify-content-space-around">
+				<div class="flex-row m-2">
+					<div class="px-1"><Tag type="is-info">Model</Tag></div>
+					<div class="px-1">{$routes.ckpt_path}</div>
+				</div>
+				<div class="flex-row m-2">
+					<div class="px-1"><Tag type="is-info">Images</Tag></div>
+					<div class="px-1">{$routes.img_dir_path}</div>
+				</div>
 			</div>
-			<div class="flex-row m-2">
-				<div class="px-1"><i class="fas fa-check-circle has-text-success"></i></div>
-				<div class="px-1">Images</div>
-				<div class="px-1">{$routes.img_dir_path}</div>
+			<div class="toggleCollapse"
+				class:collapsed 
+				on:click={() => collapsed = !collapsed}>
+				<i class="fas fa-chevron-circle-up"></i>
 			</div>
 		</div>
 		<div class="mainView container p-3">
@@ -55,7 +63,7 @@ async function getRoutes() {
 	{/await}
 </div>
 
-<style>
+<style lang="scss">
 .app {
 	display: flex;
 	flex-direction: column;
@@ -65,5 +73,25 @@ async function getRoutes() {
 	display: flex;
 	flex: 1;
 	width: 100%;
+}
+.topPanel {
+	position: relative;
+	transition: all 300ms ease-in-out;
+	&.collapsed {
+		transform: translateY(-100%);
+		position: absolute;
+	}
+	.toggleCollapse {
+		transition: all 300ms ease-in-out;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		padding: 10px;
+		cursor: pointer;
+		&.collapsed {
+			bottom: -40px;
+			transform: rotateZ(180deg);
+		}
+	}
 }
 </style>
