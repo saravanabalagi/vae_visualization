@@ -2,34 +2,50 @@
 import { modEmbedding, customImg } from '../stores';
 import { imgPath } from '../serverImgStores';
 import { Tooltip, Tag } from 'svelma';
-import { getMean, getStd, getRandn } from '../utils';
+import { getMean, getStd, getRandn, getLNorm } from '../utils';
 import path from 'path';
 import EmbeddingCanvas from './EmbeddingCanvas.svelte';
+import EmbeddingStats from './EmbeddingStats.svelte';
+import EmbeddingStatsConcise from './EmbeddingStatsConcise.svelte';
 
 let embeddingPrev = [];
 let embedding = [];
 let values = [];
+
+$:if ($imgPath != null) promise = getEmbeddingForImgPath($imgPath);
+else if($customImg != null) promise = getEmbedding($customImg);
+
+$: valuesMean = getMean(values);
+$: valuesStd = getStd(values);
+$: valuesL1 = getLNorm(values, 1);
+
+$: valuesMeanDiff = getMean(values) - getMean(embeddingPrev);
+$: valuesStdDiff = getStd(values) - getStd(embeddingPrev);
+$: valuesL1Diff = getLNorm(values, 1) - getLNorm(embeddingPrev, 1);
+
+$: embeddingDelta = values.map((v, i) => v-embeddingPrev[i]);
+$: embeddingDeltaMean = getMean(embeddingDelta);
+$: embeddingDeltaStd = getStd(embeddingDelta);
+$: embeddingDeltaL1 = getLNorm(embeddingDelta, 1);
+
 const ops = {
     'sum': () => values = values.map(v => v + operand),
     'sub': () => values = values.map(v => v - operand),
     'mul': () => values = values.map(v => v * operand),
     'div': () => values = values.map(v => v / operand),
+    'const': () => values = values.map(v => operand),
 }
 let operand = 0.1;
+
+const opsSample = {
+    'normal': sampleRandn,
+    'uniform': sampleRandu,
+    'invert': additiveInvert,
+}
+
+let showFullTable = false;
+
 let promise;
-
-$:if ($imgPath != null) promise = getEmbeddingForImgPath($imgPath);
-else if($customImg != null) promise = getEmbedding($customImg);
-
-$: embeddingDiff = values.map((v, i) => v-embeddingPrev[i]);
-
-$: valuesMean = getMean(values);
-$: valuesStd = getStd(values);
-$: embeddingMeanDiff = getMean(embedding) - getMean(embeddingPrev);
-$: embeddingDiffMean = getMean(embeddingDiff);
-$: embeddingStdDiff = getStd(embedding) - getStd(embeddingPrev);
-$: embeddingDiffStd = getStd(embeddingDiff);
-$: embeddingDiffL1 = embeddingDiff.reduce((acc,v) => acc+Math.abs(v), 0);
 
 async function getEmbedding(inputImageFile) {
     const url = '/embedding';
@@ -69,19 +85,22 @@ async function getEmbeddingForImgPath(imgPath) {
     else throw new Error(responseJson);
 }
 
+function additiveInvert() {
+    values = values.map(v => -v);
+    modEmbedding.set(values);
+}
+
 function setModEmbedding() {
     modEmbedding.set(values);
 }
 
-function setMean(e) {
-    const m = parseFloat(e.target.value);
-    values = values.map(e => m);
+function sampleRandn() {
+    values = embedding.map(v => getRandn());
     modEmbedding.set(values);
 }
 
-function setStd(e) {
-    const sigma = parseFloat(e.target.value);
-    values = embedding.map(v => getRandn());
+function sampleRandu() {
+    values = embedding.map(v => Math.random() - 0.5);
     modEmbedding.set(values);
 }
 
@@ -108,54 +127,18 @@ function resetEmbeddingAt(i) {
         </div>
     </div>
     {#if embedding.length > 0}
-        <div class="master">
-            <div class="sliderRow mean">
-                <Tooltip label="Mean" position="is-bottom">
-                    <div class="sliderIdx mr-1">μ</div>
-                </Tooltip>
-                <input type=range min={-1.5} max={1.5} step={0.01} value={valuesMean} on:change={setMean} />
-                <div class="mx-2 numDisplay has-text-right">{valuesMean.toFixed(2)}</div>
-                <div class="is-flex-grow-1">
-                    <Tooltip label={valuesMean.toFixed(2)} position="is-left">
-                        <div class="undo show mr-2"
-                            on:click={() => resetEmbeddingAt()}>
-                            <i class="fas fa-undo-alt"></i>
-                        </div>
-                    </Tooltip>
-                </div>
-                {#if embeddingPrev.length > 0}
-                    <div class="mx-2 numDisplay has-text-right" 
-                        class:green={embeddingMeanDiff>0}
-                        class:red={embeddingMeanDiff<0}
-                        >
-                        {embeddingMeanDiff.toFixed(2)}
-                    </div>
-                {/if}
+        {#if showFullTable}
+            <EmbeddingStats embedding={values} embeddingPrev={embeddingPrev} />
+        {:else}
+            <div class="px-5 pt-2 pb-1">
+                <EmbeddingStatsConcise name="stats" mu={valuesMean} sigma={valuesStd} l1={valuesL1} />
             </div>
-            <div class="sliderRow std">
-                <Tooltip label="Std" position="is-bottom">
-                    <div class="sliderIdx mr-1">σ</div>
-                </Tooltip>
-                <input type=range min={-1.5} max={1.5} step={0.01} value={valuesStd} on:change={setStd} />
-                <div class="mx-2 numDisplay has-text-right">{valuesStd.toFixed(2)}</div>
-                <div class="is-flex-grow-1">
-                    <Tooltip label={valuesStd.toFixed(2)} position="is-left">
-                        <div class="undo show mr-2"
-                            on:click={() => resetEmbeddingAt()}>
-                            <i class="fas fa-undo-alt"></i>
-                        </div>
-                    </Tooltip>
+            {#if embeddingPrev.length > 0}
+                <div class="px-5 pt-1 pb-2">
+                    <EmbeddingStatsConcise mu={valuesMeanDiff} sigma={valuesStdDiff} l1={valuesL1Diff} diff={true} />
                 </div>
-                {#if embeddingPrev.length > 0}
-                    <div class="mx-2 numDisplay has-text-right" 
-                        class:green={embeddingStdDiff>0}
-                        class:red={embeddingStdDiff<0}
-                        >
-                        {embeddingStdDiff.toFixed(2)}
-                    </div>
-                {/if}
-            </div>
-        </div>
+            {/if}
+        {/if}
         <div class="embeddingOperation m-2">
             <input class="operand" type="number" step={0.01} bind:value={operand} />
             {#each Object.keys(ops) as op}
@@ -172,23 +155,16 @@ function resetEmbeddingAt(i) {
                 </div>
             {/if}
         </div>
-        {#if embeddingPrev.length > 0}
-            <div class="delStats flex-row">
-                <div>
-                    <Tag type="is-warning">δ stats</Tag>
-                </div>
-                <div class="flex-row">
-                    <div class="mx-1 has-text-grey-light">µ</div>
-                    <div class="mx-1">{embeddingDiffMean.toFixed(2)}</div>
-                </div>
-                <div class="flex-row">
-                    <div class="mx-1 has-text-grey-light">σ</div>
-                    <div class="mx-1">{embeddingDiffStd.toFixed(2)}</div>
-                </div>
-                <div class="flex-row">
-                    <div class="mx-1 has-text-grey-light">L1</div>
-                    <div class="mx-1">{embeddingDiffL1.toFixed(2)}</div>
-                </div>
+        <div class="embeddingOperation m-2">
+            {#each Object.keys(opsSample) as op}
+                <div on:click={opsSample[op]} class='operation mx-1'><Tag>{op}</Tag></div>
+            {/each}
+            <div on:click={() => resetEmbeddingAt(null)} class='operation mx-1'><Tag type="is-danger">reset</Tag></div>
+            <div on:click={() => showFullTable = !showFullTable} class='operation mx-1'><Tag type={showFullTable? "is-info" : "is-none"}>full stats</Tag></div>
+        </div>
+        {#if embeddingPrev.length > 0 && !showFullTable}
+            <div class="px-5 py-3">
+                <EmbeddingStatsConcise name="δ stats" mu={embeddingDeltaMean} sigma={embeddingDeltaStd} l1={embeddingDeltaL1} />
             </div>
         {/if}
         <div class="embeddingSlidersWrapper">
@@ -208,10 +184,10 @@ function resetEmbeddingAt(i) {
                     </div>
                     {#if embeddingPrev.length > 0}
                         <div class="mx-2 numDisplay has-text-right" 
-                            class:green={embeddingDiff[i]>0}
-                            class:red={embeddingDiff[i]<0}
+                            class:green={embeddingDelta[i]>0}
+                            class:red={embeddingDelta[i]<0}
                         >
-                            {embeddingDiff[i].toFixed(2)}
+                            {embeddingDelta[i].toFixed(2)}
                         </div>
                     {/if}
                 </div>
@@ -242,7 +218,7 @@ function resetEmbeddingAt(i) {
     display: inline-block;
     width: 50px;
 }
-.delStats {
+.stats {
     padding: 10px 40px;
     justify-content: space-between;
 }

@@ -18,3 +18,14 @@ export const getRandn = () => {
   while (v === 0) v = Math.random();
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 };
+
+export const getLNorm = (array, l = 2, eps = 1e-6) => {
+    if (l === 0) return array.reduce((acc, v) => (Math.abs(v) < eps) ? acc : acc + 1, 0);
+    if (l === 1) return array.reduce((acc,v) => acc + Math.abs(v), 0);
+    if (l === Infinity) return Math.max(...array);
+    return array.reduce((acc,v) => acc + Math.pow(v, l), 0);
+}
+
+export const isObj = (obj) => {
+    return typeof obj === 'object' && obj !== null;
+};
