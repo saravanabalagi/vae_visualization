@@ -2,13 +2,14 @@
 import ImageView from './ImageView.svelte';
 import { imgPath, imgDir, imgIdx } from '../serverImgStores';
 import { Tooltip } from 'svelma';
+import { routes } from '../stores';
 
 let promise;
 let files = [];
 $: if($imgDir != null) promise = getInputImagesInfo($imgDir);
 
 async function getInputImagesInfo(dir) {
-    const url = `/images/${dir}`;
+    const url = `${$routes.images}/${dir}`;
     const res = await fetch(url);
     const resJson = await res.json();
     if(res.ok) {

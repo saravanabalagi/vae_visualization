@@ -35,6 +35,4 @@ export let l1;
 .stats {
     justify-content: space-between;
 }
-.diff.green { color: green; }
-.diff.red { color: red; }
 </style>

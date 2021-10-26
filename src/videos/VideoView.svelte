@@ -1,14 +1,14 @@
 <script>
+import { routes } from '../stores';
 import { imgDir } from '../serverImgStores';
 import EmbeddingsDiff from '../embeddings/EmbeddingsDiff.svelte';
 import { Tooltip } from 'svelma';
-import path from 'path';
 
 let embeddings = [];
 let promise = getEmbeddings($imgDir);
 
 async function getEmbeddings(dir) {
-    const url = `/embeddings/${dir}`;
+    const url = `${$routes.embeddings}/${dir}`;
     let response = await fetch(url);
     let responseJson = await response.json();
 

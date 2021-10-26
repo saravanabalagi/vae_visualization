@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 
+export const routes = writable();
+
 export const customImg = writable();
 export const imgPath = writable();
 export const imgDir = writable();

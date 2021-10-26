@@ -1,5 +1,5 @@
 <script>
-import { customImg as customImgStore } from '../stores';
+import { routes, customImg as customImgStore } from '../stores';
 import { imgDir as imgDirStore,
          imgIdx as imgIdxStore, 
          imgPath as imgPathStore } from '../serverImgStores';
@@ -14,7 +14,7 @@ let files = [];
 $: getFilesPromise = getFiles(imgDir);
 async function getFiles(imgDir) {
     setLoading(true);
-    const url = `/images/${imgDir}`;
+    const url = `${$routes.images}/${imgDir}`;
     const res = await fetch(url);
     const resJson = await res.json();
     files = resJson.filter(f => f.type === 'file').map(f => f.name);

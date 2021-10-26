@@ -1,5 +1,5 @@
 <script>
-import { modEmbedding, customImg } from '../stores';
+import { routes, modEmbedding, customImg } from '../stores';
 import { imgPath } from '../serverImgStores';
 import { Tooltip, Tag } from 'svelma';
 import { getMean, getStd, getRandn, getLNorm } from '../utils';
@@ -48,7 +48,7 @@ let showFullTable = false;
 let promise;
 
 async function getEmbedding(inputImageFile) {
-    const url = '/embedding';
+    const url = $routes.embeddings;
     const data = new FormData();
     data.append('image', inputImageFile)
     const content = {
@@ -71,7 +71,7 @@ async function getEmbedding(inputImageFile) {
 }
 
 async function getEmbeddingForImgPath(imgPath) {
-    const url = path.join('/embedding', imgPath.slice(7));
+    const url = path.join($routes.embeddings, imgPath.slice(7));
     let response = await fetch(url);
     let responseJson = await response.json();
 
@@ -197,17 +197,6 @@ function resetEmbeddingAt(i) {
 </div>
 
 <style lang="scss">
-.master {
-    padding: 10px 0px;
-    background: rgba(0,0,0,0.1);
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    > div {
-        display: flex;
-        align-items: center;
-    }
-}
 .embeddingView {
     display: flex;
     flex-direction: column;
@@ -217,10 +206,6 @@ function resetEmbeddingAt(i) {
 .numDisplay {
     display: inline-block;
     width: 50px;
-}
-.stats {
-    padding: 10px 40px;
-    justify-content: space-between;
 }
 .sliderRow {    
     display: flex;

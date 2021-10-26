@@ -1,11 +1,11 @@
 <script>
-import { modEmbedding, outputImage } from '../stores';
+import { routes, modEmbedding, outputImage } from '../stores';
 import ImageView from './ImageView.svelte';
 import { Tooltip } from 'svelma'; 
 
 $:promise = getOutputImage($modEmbedding);
 async function getOutputImage(modEmbedding) {
-    const url = '/decoded_img';
+    const url = $routes.decoded_img;
     const content = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

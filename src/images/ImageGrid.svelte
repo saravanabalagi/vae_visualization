@@ -2,11 +2,12 @@
 import FileUpload from "../files/FileUpload.svelte";
 import ServerImage from "./ServerImage.svelte";
 import { Button } from 'svelma';
+import { routes } from '../stores';
 
 let folders = [];
 const indexRangePromise = getImgFolders();
 async function getImgFolders() {
-    const url = '/images'
+    const url = $routes.images;
     const res = await fetch(url);
     const resJson = await res.json();
     folders = resJson.filter(f => f.type === 'directory').map(f => f.name);
