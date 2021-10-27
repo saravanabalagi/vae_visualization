@@ -22,6 +22,7 @@ paths = {
     'images': '/images',
     'embeddings': '/embeddings',
     'decoded_img': '/decoded_img',
+    'img_compare_gray': '/img_compare_gray',
 }
 
 
@@ -90,6 +91,19 @@ def send_decoded_img():
     imgs = [transform_inverse(i) for i in imgs]
     img = imgs[0]
     return serve_img(img)
+
+
+@app.route(paths['img_compare_gray'], methods=['POST'])
+def send_img_differences():
+    img1_data = request.files['image_1']
+    img2_data = request.files['image_2']
+    img1 = Image.open(img1_data)
+    img2 = Image.open(img2_data)
+    img1_gray = img1.convert('L')
+    img2_gray = img2.convert('L')
+    img_diff = np.array(img1_gray) - np.array(img2_gray)
+    # img_diff_invert = 255 - img_diff
+    return serve_img(img_diff)
 
 
 @app.route('/paths', methods=['GET'])

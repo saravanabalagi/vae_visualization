@@ -10,4 +10,5 @@ export const imgIdx = writable();
 export const embedding = writable([]);
 export const modEmbedding = writable([]);
 
+export const inputImage = writable();
 export const outputImage = writable();

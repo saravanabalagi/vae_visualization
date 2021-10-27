@@ -2,11 +2,11 @@
 import ImageView from './ImageView.svelte';
 import { imgPath, imgDir, imgIdx } from '../serverImgStores';
 import { Tooltip } from 'svelma';
-import { routes } from '../stores';
+import { routes, inputImage } from '../stores';
 
 let promise;
 let files = [];
-$: if($imgDir != null) promise = getInputImagesInfo($imgDir);
+$: if($imgDir != null && $imgIdx != null) promise = getInputImagesInfo($imgDir);
 
 async function getInputImagesInfo(dir) {
     const url = `${$routes.images}/${dir}`;
@@ -14,9 +14,25 @@ async function getInputImagesInfo(dir) {
     const resJson = await res.json();
     if(res.ok) {
         files = resJson.filter(f => f.type === 'file').map(f => f.name);
+        await getInputImage();
         return resJson;
     }
     else throw new Error(resJson);
+}
+
+async function getInputImage() {
+    const imgPathRequired = `/images/${$imgDir}/${files[$imgIdx]}`;
+    const url = `${imgPathRequired}?processed`;
+    const response = await fetch(url);
+    // display blob image https://stackoverflow.com/a/43871843/3125070
+    const urlCreator = window.URL || window.webkitURL;
+    const responseImage = urlCreator.createObjectURL(await response.blob());
+
+    if(response.ok) {
+        inputImage.set(responseImage);
+        return responseImage;
+    }
+    else throw new Error(await response.json());
 }
 
 function changeIdx(e, change) {
@@ -48,8 +64,10 @@ function changeIdx(e, change) {
             {/if}
         </div>
     </div>
-    {#if $imgDir}
-        <ImageView image={`${$imgPath}?processed`} advanced={true} />
+    {#if $imgDir && files.length > 0}
+        {#if $inputImage}
+            <ImageView image={$inputImage} advanced={true} />
+        {/if}
         <div class="imageIdxChanger mt-3 mx-3">
             <div on:click={()=> {changeIdx(null, -1)}}><i class="mx-3 fas fa-chevron-left"></i></div>
             <input type="range" min={0} max={files.length} value={$imgIdx} on:change={changeIdx} />
