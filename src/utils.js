@@ -22,7 +22,7 @@ export const getRandn = () => {
 export const getLNorm = (array, l = 2, eps = 1e-6) => {
     if (l === 0) return array.reduce((acc, v) => (Math.abs(v) < eps) ? acc : acc + 1, 0);
     if (l === 1) return array.reduce((acc,v) => acc + Math.abs(v), 0);
-    if (l === Infinity) return Math.max(...array);
+    if (l === Infinity) return Math.max(...array.map(e => Math.abs(e)));
     return array.reduce((acc,v) => acc + Math.pow(v, l), 0);
 }
 
